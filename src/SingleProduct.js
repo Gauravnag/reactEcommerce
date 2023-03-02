@@ -18,7 +18,6 @@ const SingleProduct = () => {
   const API = "https://api.pujakaitem.com/api/products";
   const { getSingleProduct, isSingleLoading, singleProduct } = useProductContext();
   const {id} = useParams();
-  const [amount, setAmount] = useState(1);
  
   const {
     id: alias,
@@ -41,14 +40,6 @@ const SingleProduct = () => {
     return(
       <div className="page_loading">...Loading</div>
     )
-  }
-
-  const decrement = () => {
-    return amount > 1 ? setAmount(amount - 1) : setAmount(1);
-  }
-
-  const increment = () => {
-    return amount < stock ? setAmount(amount + 1) : setAmount(amount);
   }
 
   return(
@@ -103,15 +94,6 @@ const SingleProduct = () => {
 
                 { stock > 0 && <AddToCart product={singleProduct} /> }
 
-              <CartAmountToggle
-                amount={amount}
-                setDecrement={decrement}
-                setIncrement={increment}
-               />
-
-               <NavLink to="/cart">
-                  <Button>Add To Cart</Button>
-               </NavLink>
           </div>
         </div>
       </Container>

@@ -1,12 +1,35 @@
+import { getValue } from "@testing-library/user-event/dist/utils"
 
 const filterReducer = (state, action) => {
     switch(action.type) {
         case "LOAD_FILTER_PRODUCTS":
+            let priceArr = action.payload.map((curr) => {
+                return curr.price;
+            })
+            
+            // 1st Way
+            // let maxPrice = Math.max.apply(null, priceArr);
+            // console.log(maxPrice);
+
+            // 2 Way
+            // let maxPrice = priceArr.reduce((initialVal, currVal) => {
+            //     return Math.max(initialVal, currVal)
+            // }, 0)
+            // console.log(maxPrice)
+
+            // 3 Way
+            let maxPrice = Math.max(...priceArr);
+
             return {
                 // [...] =  Here it write as we don't want to change the original data. This will create the duplicate copy
                 ...state,
                 filter_product: [...action.payload],
                 all_product: [...action.payload],
+                filters: {
+                    ...state.filters,
+                    maxPrice,
+                    price: maxPrice,
+                }
             }
 
         case "SET_GRID_VIEW":
@@ -87,6 +110,75 @@ const filterReducer = (state, action) => {
             return {
                 ...state,
                 filter_product: newSortData,
+            }
+
+        case "UPDATE_FILTER_VALUE":
+            const {name, value} = action.payload;
+            return {
+                ...state,
+                filters: {
+                    ...state.filters,
+                    [name]: value,
+                }
+            }
+
+        case "FILTER_PRODUCTS":
+            let {all_product} = state;
+            let tempFilterProduct = [...all_product];
+            const {text, category, company, color, price} = state.filters;
+
+            if(text) {
+                tempFilterProduct = tempFilterProduct.filter((curr) => {
+                    return curr.name.toLowerCase().includes(text);
+                })
+            }
+
+            if(category !== "all") {
+                tempFilterProduct = tempFilterProduct.filter((curr) => {
+                    return curr.category === category;
+                })
+            }
+
+            if(company !== "all") {
+                tempFilterProduct = tempFilterProduct.filter((curr) => {
+                    return curr.company.toLowerCase() === company.toLowerCase();
+                })
+            }
+
+            if(color !== "all") {
+                tempFilterProduct = tempFilterProduct.filter((curr) => {
+                    return curr.colors.includes(color);
+                })
+            }
+
+            if(price === 0) {
+                tempFilterProduct = tempFilterProduct.filter((curr) => {
+                    return curr.price === price;
+                });
+            } else {
+                tempFilterProduct = tempFilterProduct.filter((curr) => {
+                    return curr.price <= price;
+                });
+            }
+
+            return {
+                ...state,
+                filter_product: tempFilterProduct,
+                }
+
+        case "CLEAR_FILTERS":
+            return {
+                ...state,
+                filters: {
+                    ...state.filters,
+                    text: "",
+                    category: "all",
+                    company: "all",
+                    color: "all",
+                    maxPrice: state.filters.maxPrice,
+                    price: state.filters.maxPrice,
+                    minPrice: state.filters.minPrice,
+                }
             }
         
         default: 

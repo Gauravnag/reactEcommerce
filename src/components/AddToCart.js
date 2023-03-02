@@ -1,11 +1,24 @@
 import { useState } from "react";
 import { FaCheck } from "react-icons/fa";
 import styled from "styled-components";
+import CartAmountToggle from "./CartAmountToggle";
+import  {Button}  from "../styles/Button";
+import { NavLink } from "react-router-dom";
 
 const AddToCart = ({product}) => {
     
-    const {id, colors} = product;
+    const {id, colors, stock} = product;
     const [activ, setActiv] = useState();
+    const [amount, setAmount] = useState(1);
+
+    const decrement = () => {
+      return amount > 1 ? setAmount(amount - 1) : setAmount(1);
+    }
+
+    const increment = () => {
+      return amount < stock ? setAmount(amount + 1) : setAmount(stock);
+    }
+
     // Add and Remove Active Class
     return(
         <Wrapper>
@@ -24,6 +37,18 @@ const AddToCart = ({product}) => {
                     }
                 </p>
            </div>
+
+           {/* Add to cart */}
+            <CartAmountToggle 
+              amount={amount}
+              setDecrement={decrement}
+              setIncrement={increment}
+            />
+
+            <NavLink to="/cart">
+              <Button>Add To Cart</Button>
+            </NavLink>
+
         </Wrapper>
     )
 }

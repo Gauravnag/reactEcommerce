@@ -9,6 +9,15 @@ const initialState = {
     all_product: [],
     grid_view: true,
     sort_value: "lowest",
+    filters: {
+        text: "",
+        category: "all",
+        company: "all",
+        color: "all",
+        maxPrice: 0,
+        price: 0,
+        minPrice: 0,
+    }
 }
 
 export const FilterProviderContext = ({children}) => {
@@ -27,11 +36,20 @@ export const FilterProviderContext = ({children}) => {
         dispatch({ type: "SET_LIST_VIEW" })
     }
 
+    // Input Search Field & Update the filter value
+    const updateFilterValue = (event) => {
+        let name = event.target.name;
+        let value = event.target.value;
+
+        dispatch({type: "UPDATE_FILTER_VALUE", payload: { name, value }});
+    }
+
     // Sorting Lowest, Higest, a-z, z-a products OR to sort product
     useEffect(() => {
         // dispatch({ type: "SORTING_PRODUCTS", payload: products });
+        dispatch({type: "FILTER_PRODUCTS"});
         dispatch({ type: "SORTING_PRODUCTS" });
-    }, [state.sort_value])
+    }, [products, state.sort_value, state.filters])
 
     // Sorting Function
     const sorting = (event) => {
@@ -44,8 +62,13 @@ export const FilterProviderContext = ({children}) => {
         dispatch({ type: "LOAD_FILTER_PRODUCTS", payload: products })
     }, [products])
 
+    // Clear Filter
+    const clearFilters = () => {
+        dispatch({ type: "CLEAR_FILTERS" })
+    }
+
     return (
-    <FilterContext.Provider value={{...state, setGridView, setListView, sorting }}>
+    <FilterContext.Provider value={{...state, setGridView, setListView, sorting, updateFilterValue, clearFilters }}>
         {children}
     </FilterContext.Provider>
     )
