@@ -4,11 +4,15 @@ import styled from "styled-components";
 import CartAmountToggle from "./CartAmountToggle";
 import  {Button}  from "../styles/Button";
 import { NavLink } from "react-router-dom";
+import { useCartContext } from "../context/cart_context";
 
 const AddToCart = ({product}) => {
+
+  const {addToCart} = useCartContext();
     
     const {id, colors, stock} = product;
-    const [activ, setActiv] = useState();
+    // const [activ, setActiv] = useState();
+    const [color, setColor] = useState(colors[0]);
     const [amount, setAmount] = useState(1);
 
     const decrement = () => {
@@ -27,11 +31,11 @@ const AddToCart = ({product}) => {
                     { 
                         colors.map((curr, ind) => {
                             return <button type="button" 
-                                    className={curr === activ ? "btnStyle active" : "btnStyle" }
-                                    onClick={() => setActiv(curr) }
+                                    className={color === curr ? "btnStyle active" : "btnStyle" }
+                                    onClick={() => setColor(curr) }
                                     style={{backgroundColor: curr}}
                                     key={ind}>
-                                        {curr === activ ? <FaCheck className="checkStyle" /> : ""}
+                                        {color === curr ? <FaCheck className="checkStyle" /> : null}
                                     </button>
                         })
                     }
@@ -45,7 +49,7 @@ const AddToCart = ({product}) => {
               setIncrement={increment}
             />
 
-            <NavLink to="/cart">
+            <NavLink to="/cart" onClick={() => addToCart(id, color, amount, product)}>
               <Button>Add To Cart</Button>
             </NavLink>
 
