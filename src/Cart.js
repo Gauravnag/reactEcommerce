@@ -232,4 +232,4 @@ const Wrapper = styled.section`
   }
 `;
 
-export default Cart;
+export default Cart;  
